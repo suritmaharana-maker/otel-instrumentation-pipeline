@@ -1,0 +1,30 @@
+version: "3.9"
+
+services:
+
+  app:
+    build: ./app
+    ports:
+      - "8000:8000"
+    depends_on:
+      - collector
+
+  collector:
+    image: otel/opentelemetry-collector:latest
+    volumes:
+      - ./collector/collector-config.yaml:/etc/otel/config.yaml
+    command: ["--config=/etc/otel/config.yaml"]
+    ports:
+      - "4317:4317"
+      - "4318:4318"
+      - "9464:9464"
+
+  jaeger:
+    image: jaegertracing/all-in-one:latest
+    ports:
+      - "16686:16686"
+
+  prometheus:
+    image: prom/prometheus
+    ports:
+      - "9090:9090"
